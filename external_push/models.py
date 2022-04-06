@@ -145,6 +145,8 @@ class GenericPushTarget(models.Model):
                         data_to_send['beer_temp'] = float(device_info['BeerTemp'])
                     if device_info['FridgeTemp'] is not None:
                         data_to_send['fridge_temp'] = float(device_info['FridgeTemp'])
+                    if device_info['FridgeHumidity'] is not None:
+                        data_to_send['fridge_humidity'] = float(device_info['FridgeHumidity'])
 
                     # Gravity isn't retrieved via get_dashpanel_info, and as such requires special handling
                     try:
@@ -191,6 +193,10 @@ class GenericPushTarget(models.Model):
                     if device_info['RoomTemp'] is not None:
                         if device_info['RoomTemp'] != 0:
                             data_to_send['room_temp'] = float(device_info['RoomTemp'])
+
+                    if device_info['FridgeHumidity'] is not None:
+                        if device_info['FridgeHumidity'] != 0:
+                            data_to_send['fridge_humidity'] = float(device_info['FridgeHumidity'])
 
                     if device_info['BeerSet'] is not None:
                         if device_info['BeerSet'] != 0:
@@ -539,6 +545,10 @@ class BrewfatherPushTarget(models.Model):
                             if device_info['FridgeTemp'] != 0:
                                 to_send['aux_temp'] = temp_convert(float(device_info['FridgeTemp']),
                                                                 brewpi_temp_format, latest_log_point.temp_format)
+                        if device_info['FridgeHumidity'] is not None:
+                            if device_info['FridgeHumidity'] != 0:
+                                to_send['aux_temp'] = temp_convert(float(device_info['FridgeHumidity']),
+                                                                brewpi_temp_format, latest_log_point.temp_format)                                                                
                         if device_info['RoomTemp'] is not None:
                             if device_info['RoomTemp'] != 0:
                                 to_send['ext_temp'] = temp_convert(float(device_info['RoomTemp']),
@@ -579,6 +589,11 @@ class BrewfatherPushTarget(models.Model):
                     if 'FridgeTemp' in device_info:
                         if device_info['FridgeTemp'] is not None:
                             to_send['aux_temp'] = float(device_info['FridgeTemp'])
+
+
+                    if 'FridgeHumidity' in device_info:
+                        if device_info['FridgeHumidity'] is not None:
+                            to_send['aux_temp'] = float(device_info['FridgeHumidity'])
 
                     if 'RoomTemp' in device_info:
                         if device_info['RoomTemp'] is not None:
@@ -725,16 +740,19 @@ class ThingSpeakPushTarget(models.Model):
                 if device_info['FridgeTemp'] is not None:
                     if device_info['FridgeTemp'] != 0:
                         data_to_send['field5'] = float(device_info['FridgeTemp'])
+                if device_info['FridgeHumidity'] is not None:
+                    if device_info['FridgeHumidity'] != 0:
+                        data_to_send['field6'] = float(device_info['FridgeHumidity'])                        
                 if device_info['RoomTemp'] is not None:
                     if device_info['RoomTemp'] != 0:
-                        data_to_send['field6'] = float(device_info['RoomTemp'])
+                        data_to_send['field7'] = float(device_info['RoomTemp'])
 
                 # Gravity isn't retrieved via get_dashpanel_info, and as such requires special handling
                 try:
                     if brewpi.gravity_sensor is not None:
                         gravity = brewpi.gravity_sensor.retrieve_latest_gravity()
                         if gravity is not None:
-                            data_to_send['field7'] = float(gravity)
+                            data_to_send['field8'] = float(gravity)
                 except:
                     pass
 

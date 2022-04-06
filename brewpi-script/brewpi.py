@@ -386,6 +386,7 @@ prevTempJson = {
     "FridgeTemp": 0,
     "BeerAnn": None,
     "FridgeAnn": None,
+    "FridgeHumidity": 0,
     "RoomTemp": None,
     "State": None,
     "BeerSet": 0,
@@ -401,6 +402,7 @@ def renameTempKey(key):
         "ft": "FridgeTemp",
         "fs": "FridgeSet",
         "fa": "FridgeAnn",
+        "fh": "FridgeHumidity",
         "rt": "RoomTemp",
         "s": "State",
         "t": "Time"}
@@ -610,6 +612,7 @@ while run:
                         "FridgeTemp": prevTempJson['FridgeTemp'],
                         "BeerAnn": prevTempJson['BeerAnn'],
                         "FridgeAnn": prevTempJson['FridgeAnn'],
+                        "FridgeHumidity": prevTempJson['FridgeHumidity'],
                         "RoomTemp": prevTempJson['RoomTemp'],
                         "State": prevTempJson['State'],
                         "BeerSet": prevTempJson['BeerSet'],

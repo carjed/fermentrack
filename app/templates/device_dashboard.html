@@ -94,6 +94,22 @@
         </div>
 
         <div class="col-md-3 col-sm-6 col-xs-12">
+            <div class="dashpanel dashpanel-top bg-petermann">
+                <div class="dash-icon dash-icon-lg"><i class="fa fa-water fa-fw"></i></div>
+                <div class="dashpanel-title">Fridge Humidity</div>
+                <div class="dash-data" id="dashFridgeHumidity">--&deg; -</div>
+                <!-- <div class="dashpanel-divider"></div>
+                <a href="#" data-toggle="modal" data-target="#beerLogModal">
+                    <div class="dash-desc">
+                        <div class="pull-left">Load Prior Log</div>
+                        <div class="pull-right"><i class="fa fa-arrow-circle-right"></i></div>
+                        <div class="clearfix"></div>
+                    </div>
+                </a> -->
+            </div>
+        </div>
+
+        <div class="col-md-3 col-sm-6 col-xs-12">
             <div class="dashpanel dashpanel-top bg-amethyst" id="fridgeTempPanel">
                 <div class="dash-icon dash-icon-lg"><i class="fa fa-thermometer-full fa-fw"></i></div>
                 <div class="dashpanel-title">Fridge Temp</div>
@@ -686,6 +702,7 @@ g2.ready(function () {
     updateDutyCycles();
 });
 
+var fridge_humidity_visible = true;
 var fridge_temp_visible = true;
 var fridge_set_visible = true;
 var beer_temp_visible = true;
@@ -778,6 +795,7 @@ function toggle_graph_visibility(el) {
         success: function(data) {
             $('#dashBeerTemp').html(data[0].beer_temp);
             $('#dashFridgeTemp').html(data[0].fridge_temp);
+            $('#dashFridgeHumidity').html(data[0].fridge_humidity);
             $('#dashRoomTemp').html(data[0].room_temp);
             $('#dashControlMode').html(data[0].control_mode);
             $('#dashLogInterval').html(data[0].log_interval);

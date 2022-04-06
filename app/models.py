@@ -108,7 +108,7 @@ class SensorDevice(models.Model):
     DEVICE_FUNCTION_CHAMBER_TEMP = 5
     DEVICE_FUNCTION_CHAMBER_ROOM_TEMP = 6
     DEVICE_FUNCTION_CHAMBER_FAN = 7
-    DEVICE_FUNCTION_MANUAL_ACTUATOR = 8
+    DEVICE_FUNCTION_CHAMBER_HUMIDITY = 8
     DEVICE_FUNCTION_BEER_TEMP = 9
     DEVICE_FUNCTION_BEER_TEMP2 = 10
     DEVICE_FUNCTION_BEER_HEAT = 11
@@ -131,6 +131,7 @@ class SensorDevice(models.Model):
         (DEVICE_FUNCTION_CHAMBER_TEMP,  'Chamber Temp'),  # CHAMBER_TEMP
         (DEVICE_FUNCTION_CHAMBER_ROOM_TEMP, 'Room (outside) Temp'),  # CHAMBER_ROOM_TEMP
         (DEVICE_FUNCTION_CHAMBER_FAN,   'Chamber Fan'),  # CHAMBER_FAN
+        (DEVICE_FUNCTION_CHAMBER_HUMIDITY,   'Chamber Humidity'),  # CHAMBER_HUMIDITY
         # (DEVICE_FUNCTION_MANUAL_ACTUATOR, 'CHAMBER_RESERVED1'),   # Unused, reserved for future use - Tagged as "Manual Actuator" in develop www
         (DEVICE_FUNCTION_BEER_TEMP,     'Beer Temp'),           # Primary beer temp sensor
         # The rest of these are available in the code, but appear to have no implemented functionality.
@@ -164,6 +165,7 @@ class SensorDevice(models.Model):
         (3, 'Switch Actuator'),
         (4, 'PWM Actuator'),
         (5, 'Manual Actuator'),
+        (6, 'Humidity Sensor'),
     )
 
     INVERT_CHOICES = (
@@ -729,6 +731,8 @@ class BrewPiDevice(models.Model):
                 self.cool_pin = this_device
             elif this_device.device_function == SensorDevice.DEVICE_FUNCTION_CHAMBER_TEMP:  # (5, 'CHAMBER_TEMP'),
                 self.chamber_sensor = this_device
+            elif this_device.device_function == SensorDevice.DEVICE_FUNCTION_CHAMBER_HUMIDITY:  # (8, 'CHAMBER_TEMP'),
+                self.chamber_humidity = this_device                
             elif this_device.device_function == SensorDevice.DEVICE_FUNCTION_CHAMBER_ROOM_TEMP:  # (6, 'CHAMBER_ROOM_TEMP'),
                 self.room_sensor = this_device
             elif this_device.device_function == SensorDevice.DEVICE_FUNCTION_BEER_TEMP:  # (9, 'BEER_TEMP'),
@@ -1095,18 +1099,18 @@ class Beer(models.Model):
     def column_headers(self, which='base_csv', human_readable=False):
         if which == 'base_csv':
             if human_readable:
-                headers = ['Log Time', 'Beer Temp', 'Beer Setting', 'Fridge Temp', 'Fridge Setting', 'Room Temp']
+                headers = ['Log Time', 'Beer Temp', 'Beer Setting', 'Fridge Temp', 'Fridge Setting', 'Room Temp', 'Fridge Humidity']
             else:
-                headers = ['log_time', 'beer_temp', 'beer_set', 'fridge_temp', 'fridge_set', 'room_temp']
+                headers = ['log_time', 'beer_temp', 'beer_set', 'fridge_temp', 'fridge_set', 'room_temp', 'fridge_humidity']
 
         elif which == 'full_csv':
             if human_readable:
                 # Currently unused
                 headers = ['log_time', 'beer_temp', 'beer_set', 'beer_ann', 'fridge_temp', 'fridge_set', 'fridge_ann',
-                           'room_temp', 'state', 'temp_format', 'associated_beer_id']
+                           'room_temp', 'fridge_humidity', 'state', 'temp_format', 'associated_beer_id']
             else:
                 headers = ['log_time', 'beer_temp', 'beer_set', 'beer_ann', 'fridge_temp', 'fridge_set', 'fridge_ann',
-                           'room_temp', 'state', 'temp_format', 'associated_beer_id']
+                           'room_temp', 'fridge_humidity', 'state', 'temp_format', 'associated_beer_id']
         else:
             return None
 
@@ -1131,7 +1135,7 @@ class Beer(models.Model):
     def base_column_visibility(self):
         # TODO - Determine if we want to take some kind of user setting into account (auto-hide room temp, for example)
         # headers = [x, 'beer_temp', 'beer_set', 'fridge_temp', 'fridge_set', 'room_temp']
-        visibility = "[true, true, true, true, true"
+        visibility = "[true, true, true, true, true, true"
 
         # This works because we're appending the gravity data to both logs
         if self.gravity_enabled:
@@ -1258,6 +1262,8 @@ class BeerLogPoint(models.Model):
     fridge_set = models.DecimalField(max_digits=5, decimal_places=2, null=True)
     fridge_ann = models.CharField(max_length=255, null=True)
 
+    fridge_humidity = models.DecimalField(max_digits=13, decimal_places=10, null=True)
+
     room_temp = models.DecimalField(max_digits=13, decimal_places=10, null=True)
     state = models.IntegerField(choices=STATE_CHOICES, default=0)
     log_time = models.DateTimeField(default=timezone.now, db_index=True)
@@ -1322,6 +1328,7 @@ class BeerLogPoint(models.Model):
             beerTemp = self.beer_temp or 0
             fridgeTemp = self.fridge_temp or 0
             roomTemp = self.room_temp or 0
+            fridgeHumidity = self.fridge_humidity or 0
             beerSet = self.beer_set or 0
             fridgeSet = self.fridge_set or 0
             gravity_log = self.gravity or 0  # We'll set this just in case
@@ -1330,6 +1337,7 @@ class BeerLogPoint(models.Model):
             beerTemp = self.beer_temp or None
             fridgeTemp = self.fridge_temp or None
             roomTemp = self.room_temp or None
+            fridgeHumidity = self.fridge_humidity or None
             beerSet = self.beer_set or None
             fridgeSet = self.fridge_set or None
             gravity_log = self.gravity or None  # We'll set this just in case
@@ -1346,23 +1354,23 @@ class BeerLogPoint(models.Model):
         if data_format == 'base_csv':
             if not self.has_gravity_enabled():
                 if self.associated_beer.model_version > 1:
-                    return [time_value, beerTemp, beerSet, fridgeTemp, fridgeSet, roomTemp, self.state]
+                    return [time_value, beerTemp, beerSet, fridgeTemp, fridgeSet, fridgeHumidity, roomTemp, self.state]
                 else:
-                    return [time_value, beerTemp, beerSet, fridgeTemp, fridgeSet, roomTemp]
+                    return [time_value, beerTemp, beerSet, fridgeTemp, fridgeSet, fridgeHumidity, roomTemp]
 
             else:
                 if self.associated_beer.model_version > 1:
-                    return [time_value, beerTemp, beerSet, fridgeTemp, fridgeSet, roomTemp, gravity_log, gravity_temp,
+                    return [time_value, beerTemp, beerSet, fridgeTemp, fridgeSet, fridgeHumidity, roomTemp, gravity_log, gravity_temp,
                             self.state]
                 else:
-                    return [time_value, beerTemp, beerSet, fridgeTemp, fridgeSet, roomTemp, gravity_log, gravity_temp]
+                    return [time_value, beerTemp, beerSet, fridgeTemp, fridgeSet, fridgeHumidity, roomTemp, gravity_log, gravity_temp]
 
         elif data_format == 'full_csv':
             if not self.has_gravity_enabled():
-                return [time_value, beerTemp, beerSet, self.beer_ann, fridgeTemp, fridgeSet, self.fridge_ann,
+                return [time_value, beerTemp, beerSet, self.beer_ann, fridgeTemp, fridgeSet, fridgeHumidity, self.fridge_ann,
                         roomTemp, self.state, self.temp_format, self.associated_beer_id]
             else:
-                return [time_value, beerTemp, beerSet, self.beer_ann, fridgeTemp, fridgeSet, self.fridge_ann,
+                return [time_value, beerTemp, beerSet, self.beer_ann, fridgeTemp, fridgeSet, fridgeHumidity, self.fridge_ann,
                         roomTemp, self.state, self.temp_format, self.associated_beer_id, gravity_log, gravity_temp]
 
         elif data_format == 'annotation_json':

@@ -27,6 +27,7 @@ jsonCols = ("\"cols\":[" +
             "{\"type\":\"number\",\"id\":\"FridgeTemp\",\"label\":\"Fridge temperature\"}," +
             "{\"type\":\"number\",\"id\":\"FridgeSet\",\"label\":\"Fridge setting\"}," +
             "{\"type\":\"string\",\"id\":\"FridgeAnn\",\"label\":\"Fridge Annotate\"}," +
+			"{\"type\":\"string\",\"id\":\"FridgeHumidity\",\"label\":\"Fridge Humidity\"}," +
             "{\"type\":\"number\",\"id\":\"RoomTemp\",\"label\":\"Room temp.\"}," +
             "{\"type\":\"number\",\"id\":\"State\",\"label\":\"State\"}" +
             "]")
@@ -89,6 +90,11 @@ def addRow(jsonFileName, row):
 		jsonFile.write("null,")
 	else:
 		jsonFile.write("{\"v\":\"" + str(row['FridgeAnn']) + "\"},")
+
+	if row['FridgeHumidity'] is None:
+		jsonFile.write("null,")
+	else:
+		jsonFile.write("{\"v\":\"" + str(row['FridgeHumidity']) + "\"},")
 
 	if row['RoomTemp'] is None:
 		jsonFile.write("null,")

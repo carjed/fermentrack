@@ -84,6 +84,30 @@
         {% endif %}  {# TODO - Add support for OneWire actuators #}
             </div>
         </div>
+
+        {# Fridge/Chamber Humidity #}
+        <div class="col-sm-4 sensor-setup-grid-box">
+            <div class="row ">
+            {% if active_device.chamber_humidity %}
+                <span class="fa-stack fa-5x">
+                  <i class="fa fa-square-o fa-stack-2x text-success"></i>
+                  <i class="fa fa-bolt fa-stack-1x text-info"></i>
+                </span>
+            </div>
+            <div class="row">
+                Chamber humidity sensor set to pin {{ active_device.chamber_humidity.pin }}
+        {% else %}
+                <span class="fa-stack fa-5x">
+                  <i class="fa fa-square-o fa-stack-2x text-error" style="color: #22298b;"></i>
+                  <i class="fa fa-water fa-stack-1x text-info"></i>
+                </span>
+            </div>
+            <div class="row">
+                Humidity sensor pin NOT set<br />Humidity will not be monitored<br />Configure below to correct
+        {% endif %}  {# TODO - Add support for OneWire actuators #}
+            </div>
+        </div>
+        
     </div>{# /heating/cooling/fridge row #}
 
 
