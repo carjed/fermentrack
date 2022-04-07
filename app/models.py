@@ -42,7 +42,7 @@ logger = logging.getLogger(__name__)
 
 class PinDevice(models.Model):
     class Meta:
-        managed = False
+        managed = True
 
     text = models.CharField(max_length=16, default="")
     type = models.CharField(max_length=8, default="")
@@ -76,7 +76,7 @@ class PinDevice(models.Model):
 # SensorDevice is a "sensor" (onewire addressable?) device
 class SensorDevice(models.Model):
     class Meta:
-        managed = False
+        managed = True
         verbose_name = "Sensor Device"
         verbose_name_plural = "Sensor Devices"
 
@@ -1234,7 +1234,7 @@ class BeerLogPoint(models.Model):
     """
 
     class Meta:
-        managed = False  # Since we're using flatfiles rather than a database
+        managed = True  # Since we're using flatfiles rather than a database
         verbose_name = "Beer Log Point"
         verbose_name_plural = "Beer Log Points"
         ordering = ['log_time']
