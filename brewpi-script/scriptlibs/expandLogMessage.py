@@ -37,7 +37,7 @@ def valToFunction(val):
                  'Chamber Temp',  # 5
                  'Room Temp',  # 6
                  'Chamber Fan',  # 7
-                 'Chamber Reserved 1',  # 8
+                 'Chamber Humidity',  # 8
                  'Beer Temp',  # 9
                  'Beer Temperature 2',  # 10
                  'Beer Heater',  # 11
