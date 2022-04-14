@@ -39,7 +39,7 @@ def getPanel(req, device_id):
         if (hum is None) or (hum == 0):
             return "--%; {}"
         else:
-            return "{:.1f}%; {}"
+            return "{:.1f}%".format(hum)
 
     ret = []
     try:
