@@ -1262,9 +1262,9 @@ class BeerLogPoint(models.Model):
     fridge_set = models.DecimalField(max_digits=5, decimal_places=2, null=True)
     fridge_ann = models.CharField(max_length=255, null=True)
 
-    fridge_humidity = models.DecimalField(max_digits=13, decimal_places=10, null=True)
-
     room_temp = models.DecimalField(max_digits=13, decimal_places=10, null=True)
+
+    fridge_humidity = models.DecimalField(max_digits=13, decimal_places=10, null=True)
     state = models.IntegerField(choices=STATE_CHOICES, default=0)
     log_time = models.DateTimeField(default=timezone.now, db_index=True)
 
