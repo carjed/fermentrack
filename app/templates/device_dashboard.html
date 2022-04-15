@@ -233,21 +233,21 @@
                                 <td id="fridgeSetValue"></td>
                             </tr>
 
-                            <tr id="roomTempRow">
-                                <td id="roomTempLabel">
-                                    <i class="fa fa-line-chart" style="color: {{ config.GRAPH_ROOM_TEMP_COLOR }}" id="room_temp_legend" onClick="toggle_graph_visibility(this)"></i>
-                                    Room Temp
-                                </td>
-                                <td id="roomTempValue"></td>
-                            </tr>
-
                             <tr id="fridgeHumidityRow">
                                 <td id="fridgeHumidityLabel">
                                     <i class="fa fa-line-chart" style="color: {{ config.GRAPH_FRIDGE_HUMIDITY_COLOR }}" id="fridge_humidity_legend" onClick="toggle_graph_visibility(this)"></i>
                                     Fridge Humidity
                                 </td>
                                 <td id="fridgeHumidityValue"></td>
-                            </tr>                            
+                            </tr>     
+
+                            <tr id="roomTempRow">
+                                <td id="roomTempLabel">
+                                    <i class="fa fa-line-chart" style="color: {{ config.GRAPH_ROOM_TEMP_COLOR }}" id="room_temp_legend" onClick="toggle_graph_visibility(this)"></i>
+                                    Room Temp
+                                </td>
+                                <td id="roomTempValue"></td>
+                            </tr>                       
 
                             <tr>
                                 <td>
@@ -526,10 +526,10 @@ function updateLegend(e, x, pts, row) {
             $('#beerSetValue').text(formatTempText(pts[i].yval))
         } else if(pts[i].name == "fridge_set") {
             $('#fridgeSetValue').text(formatTempText(pts[i].yval))
-        } else if(pts[i].name == "room_temp") {
-            $('#roomTempValue').text(formatTempText(pts[i].yval))
         } else if(pts[i].name == "fridge_humidity") {
             $('#fridgeHumidityValue').text(formatHumidityText(pts[i].yval))            
+        } else if(pts[i].name == "room_temp") {
+            $('#roomTempValue').text(formatTempText(pts[i].yval))
         }{% if beer.gravity_enabled %} else if(pts[i].name == "gravity") {
             $('#gravityValue').text(formatGravText(pts[i].yval))
         } else if(pts[i].name == "grav_temp") {
@@ -622,6 +622,21 @@ g2 = new Dygraph(
         },
 {% else %}
         colors: ["{{ config.GRAPH_BEER_TEMP_COLOR }}", "{{ config.GRAPH_BEER_SET_COLOR }}", "{{ config.GRAPH_FRIDGE_TEMP_COLOR }}", "{{ config.GRAPH_FRIDGE_SET_COLOR }}", "{{ config.GRAPH_ROOM_TEMP_COLOR }}", "{{ config.GRAPH_FRIDGE_HUMIDITY_COLOR }}"],
+        ylabel: 'Temperature',
+        y2label: 'Humidity',
+        series: {
+            'humidity': {
+                axis: 'y2'
+            }
+        },
+        axes: {
+            y: {
+                digitsAfterDecimal: 1
+            },
+            y2: {
+                digitsAfterDecimal: 1
+            }
+        },
 {% endif %}
         highlightCallback: (...args) => {
             updateLegend(...args);
@@ -748,15 +763,15 @@ function toggle_graph_visibility(el) {
         g2.setVisibility(3, fridge_set_visible);
         $('#fridgeSetValue').text("");
 
-    } else if(el.id == "room_temp_legend") {
-        room_temp_visible = !room_temp_visible;
-        g2.setVisibility(4, room_temp_visible);
-        $('#roomTempValue').text("");
-
     } else if(el.id == "fridge_humidity_legend") {
         fridge_humidity_visible = !fridge_humidity_visible;
         g2.setVisibility(5, fridge_humidity_visible);
         $('#fridgeHumidityValue').text("");
+
+    } else if(el.id == "room_temp_legend") {
+        room_temp_visible = !room_temp_visible;
+        g2.setVisibility(4, room_temp_visible);
+        $('#roomTempValue').text("");
 
     } {% if beer.gravity_enabled %}else if(el.id == "gravity_legend") {
         gravity_visible = !gravity_visible;
@@ -816,8 +831,8 @@ function toggle_graph_visibility(el) {
         success: function(data) {
             $('#dashBeerTemp').html(data[0].beer_temp);
             $('#dashFridgeTemp').html(data[0].fridge_temp);
-            $('#dashRoomTemp').html(data[0].room_temp);
             $('#dashFridgeHumidity').html(data[0].fridge_humidity);
+            $('#dashRoomTemp').html(data[0].room_temp);
             $('#dashControlMode').html(data[0].control_mode);
             $('#dashLogInterval').html(data[0].log_interval);
         },
