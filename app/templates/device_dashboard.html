@@ -243,7 +243,7 @@
 
                             <tr id="fridgeHumidityRow">
                                 <td id="fridgeHumidityLabel">
-                                    <i class="fa fa-line-chart" style="color: {{ config.GRAPH_FRIDGE_SET_COLOR }}" id="fridge_humidity_legend" onClick="toggle_graph_visibility(this)"></i>
+                                    <i class="fa fa-line-chart" style="color: {{ config.GRAPH_FRIDGE_HUMIDITY_COLOR }}" id="fridge_humidity_legend" onClick="toggle_graph_visibility(this)"></i>
                                     Fridge Humidity
                                 </td>
                                 <td id="fridgeHumidityValue"></td>
@@ -592,7 +592,7 @@ g2 = new Dygraph(
           },
 {% endif %}
 {% if beer.gravity_enabled %}
-        colors: ["{{ config.GRAPH_BEER_TEMP_COLOR }}", "{{ config.GRAPH_BEER_SET_COLOR }}", "{{ config.GRAPH_FRIDGE_TEMP_COLOR }}", "{{ config.GRAPH_FRIDGE_SET_COLOR }}", "{{ config.GRAPH_ROOM_TEMP_COLOR }}", "{{ config.GRAPH_GRAVITY_COLOR }}", "{{ config.GRAPH_GRAVITY_TEMP_COLOR }}"],
+        colors: ["{{ config.GRAPH_BEER_TEMP_COLOR }}", "{{ config.GRAPH_BEER_SET_COLOR }}", "{{ config.GRAPH_FRIDGE_TEMP_COLOR }}", "{{ config.GRAPH_FRIDGE_SET_COLOR }}", "{{ config.GRAPH_ROOM_TEMP_COLOR }}", "{{ config.GRAPH_FRIDGE_HUMIDITY_COLOR }}", "{{ config.GRAPH_GRAVITY_COLOR }}", "{{ config.GRAPH_GRAVITY_TEMP_COLOR }}"],
         ylabel: 'Temperature',
         y2label: 'Gravity',
         series: {
@@ -615,7 +615,7 @@ g2 = new Dygraph(
             }
         },
 {% else %}
-        colors: ["{{ config.GRAPH_BEER_TEMP_COLOR }}", "{{ config.GRAPH_BEER_SET_COLOR }}", "{{ config.GRAPH_FRIDGE_TEMP_COLOR }}", "{{ config.GRAPH_FRIDGE_SET_COLOR }}", "{{ config.GRAPH_ROOM_TEMP_COLOR }}"],
+        colors: ["{{ config.GRAPH_BEER_TEMP_COLOR }}", "{{ config.GRAPH_BEER_SET_COLOR }}", "{{ config.GRAPH_FRIDGE_TEMP_COLOR }}", "{{ config.GRAPH_FRIDGE_SET_COLOR }}", "{{ config.GRAPH_ROOM_TEMP_COLOR }}", "{{ config.GRAPH_FRIDGE_HUMIDITY_COLOR }}"],
 {% endif %}
         highlightCallback: (...args) => {
             updateLegend(...args);
@@ -750,7 +750,7 @@ function toggle_graph_visibility(el) {
     } else if(el.id == "fridge_humidity_legend") {
         fridge_humidity_visible = !fridge_humidity_visible;
         g2.setVisibility(5, fridge_humidity_visible);
-        $('#roomTempValue').text("");
+        $('#fridgeHumidityValue').text("");
 
     } {% if beer.gravity_enabled %}else if(el.id == "gravity_legend") {
         gravity_visible = !gravity_visible;

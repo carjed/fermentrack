@@ -258,6 +258,7 @@ CONSTANCE_CONFIG = {
     'GRAPH_FRIDGE_TEMP_COLOR': ("#044B7F", 'What color do you want the fridge temperature line on the graph?', str),
     'GRAPH_FRIDGE_SET_COLOR': ("#107E7D", 'What color do you want the fridge setting line on the graph?', str),
     'GRAPH_ROOM_TEMP_COLOR': ("#610345", 'What color do you want the room temperature line on the graph?', str),
+    'GRAPH_FRIDGE_HUMIDITY_COLOR': ("#610345", 'What color do you want the fridge humidity line on the graph?', str),
     'GRAPH_GRAVITY_COLOR': ("#95190C", 'What color do you want the specific gravity line on the graph?', str),
     'GRAPH_GRAVITY_TEMP_COLOR': ("#280003", 'What color do you want the gravity sensor temperature line on the graph?', str),
     'SQLITE_OK_DJANGO_2': (False, 'Has the Django 2.0+ SQLite migration been run?',
@@ -272,7 +273,7 @@ CONSTANCE_CONFIG_FIELDSETS = {
                         'GRAVITY_DISPLAY_FORMAT', 'CUSTOM_THEME'),
 
     'Graph Colors': ('GRAPH_BEER_TEMP_COLOR', 'GRAPH_BEER_SET_COLOR', 'GRAPH_FRIDGE_TEMP_COLOR',
-                     'GRAPH_FRIDGE_SET_COLOR', 'GRAPH_ROOM_TEMP_COLOR', 'GRAPH_GRAVITY_COLOR',
+                     'GRAPH_FRIDGE_SET_COLOR', 'GRAPH_ROOM_TEMP_COLOR', 'GRAPH_FRIDGE_HUMIDITY_COLOR', 'GRAPH_GRAVITY_COLOR',
                      'GRAPH_GRAVITY_TEMP_COLOR'),
 
     'Internal Items': ('FIRMWARE_LIST_LAST_REFRESHED', 'LAST_GIT_CHECK', 'USER_HAS_COMPLETED_CONFIGURATION',
