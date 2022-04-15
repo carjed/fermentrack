@@ -240,7 +240,15 @@
                                 </td>
                                 <td id="roomTempValue"></td>
                             </tr>
-                            
+
+                            <tr id="fridgeHumidityRow">
+                                <td id="fridgeHumidityLabel">
+                                    <i class="fa fa-line-chart" style="color: {{ config.GRAPH_FRIDGE_SET_COLOR }}" id="fridge_humidity_legend" onClick="toggle_graph_visibility(this)"></i>
+                                    Fridge Humidity
+                                </td>
+                                <td id="fridgeHumidityValue"></td>
+                            </tr>                            
+
                             <tr>
                                 <td>
                                     <i class="fa fa-thermometer-empty" style="color: rgba(66, 134, 244, 0.3)"></i>
@@ -514,6 +522,8 @@ function updateLegend(e, x, pts, row) {
             $('#fridgeSetValue').text(formatTempText(pts[i].yval))
         } else if(pts[i].name == "room_temp") {
             $('#roomTempValue').text(formatTempText(pts[i].yval))
+        } else if(pts[i].name == "fridge_humidity") {
+            $('#fridgeHumidityValue').text(formatTempText(pts[i].yval))            
         }{% if beer.gravity_enabled %} else if(pts[i].name == "gravity") {
             $('#gravityValue').text(formatGravText(pts[i].yval))
         } else if(pts[i].name == "grav_temp") {
@@ -623,9 +633,9 @@ const stateToName = state => (({
 // whether a gravity device is enabled.  Ideally, the gravity data should be added to the
 // end of the record instead of before the state.
 {% if beer.gravity_enabled %}
-const stateIndex = 8;
+const stateIndex = 9;
 {% else %}
-const stateIndex = 6;
+const stateIndex = 7;
 {% endif %}
 
 const computeDutyCycles = () => {
@@ -737,14 +747,19 @@ function toggle_graph_visibility(el) {
         g2.setVisibility(4, room_temp_visible);
         $('#roomTempValue').text("");
 
+    } else if(el.id == "fridge_humidity_legend") {
+        fridge_humidity_visible = !fridge_humidity_visible;
+        g2.setVisibility(5, fridge_humidity_visible);
+        $('#roomTempValue').text("");
+
     } {% if beer.gravity_enabled %}else if(el.id == "gravity_legend") {
         gravity_visible = !gravity_visible;
-        g2.setVisibility(5, gravity_visible);
+        g2.setVisibility(6, gravity_visible);
         $('#gravityValue').text("");
 
     } else if(el.id == "gravity_temp_legend") {
         gravity_temp_visible = !gravity_temp_visible;
-        g2.setVisibility(6, gravity_temp_visible);
+        g2.setVisibility(7, gravity_temp_visible);
         $('#gravityTempValue').text("");
     }{% endif %}
 }
@@ -795,8 +810,8 @@ function toggle_graph_visibility(el) {
         success: function(data) {
             $('#dashBeerTemp').html(data[0].beer_temp);
             $('#dashFridgeTemp').html(data[0].fridge_temp);
-            $('#dashFridgeHumidity').html(data[0].fridge_humidity);
             $('#dashRoomTemp').html(data[0].room_temp);
+            $('#dashFridgeHumidity').html(data[0].fridge_humidity);
             $('#dashControlMode').html(data[0].control_mode);
             $('#dashLogInterval').html(data[0].log_interval);
         },
