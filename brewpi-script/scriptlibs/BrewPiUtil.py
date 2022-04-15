@@ -72,11 +72,11 @@ def save_beer_log_point(db_config_object, beer_row):
     new_log_point.fridge_temp = beer_row['FridgeTemp']
     new_log_point.fridge_set = beer_row['FridgeSet']
     new_log_point.fridge_ann = beer_row['FridgeAnn']
+    new_log_point.fridge_humidity = beer_row['FridgeHumidity']
 
     new_log_point.room_temp = beer_row['RoomTemp']
     new_log_point.state = beer_row['State']
 
-    new_log_point.fridge_humidity = beer_row['FridgeHumidity']
 
     new_log_point.temp_format = db_config_object.temp_format
     new_log_point.associated_beer = db_config_object.active_beer

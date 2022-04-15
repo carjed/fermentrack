@@ -1099,18 +1099,18 @@ class Beer(models.Model):
     def column_headers(self, which='base_csv', human_readable=False):
         if which == 'base_csv':
             if human_readable:
-                headers = ['Log Time', 'Beer Temp', 'Beer Setting', 'Fridge Temp', 'Fridge Setting', 'Room Temp', 'Fridge Humidity']
+                headers = ['Log Time', 'Beer Temp', 'Beer Setting', 'Fridge Temp', 'Fridge Setting', 'Fridge Humidity', 'Room Temp']
             else:
-                headers = ['log_time', 'beer_temp', 'beer_set', 'fridge_temp', 'fridge_set', 'room_temp', 'fridge_humidity']
+                headers = ['log_time', 'beer_temp', 'beer_set', 'fridge_temp', 'fridge_set', 'fridge_humidity', 'room_temp']
 
         elif which == 'full_csv':
             if human_readable:
                 # Currently unused
                 headers = ['log_time', 'beer_temp', 'beer_set', 'beer_ann', 'fridge_temp', 'fridge_set', 'fridge_ann',
-                           'room_temp', 'fridge_humidity', 'state', 'temp_format', 'associated_beer_id']
+                           'fridge_humidity', 'room_temp', 'state', 'temp_format', 'associated_beer_id']
             else:
                 headers = ['log_time', 'beer_temp', 'beer_set', 'beer_ann', 'fridge_temp', 'fridge_set', 'fridge_ann',
-                           'room_temp', 'fridge_humidity', 'state', 'temp_format', 'associated_beer_id']
+                           'fridge_humidity', 'room_temp', 'state', 'temp_format', 'associated_beer_id']
         else:
             return None
 
@@ -1262,9 +1262,9 @@ class BeerLogPoint(models.Model):
     fridge_set = models.DecimalField(max_digits=5, decimal_places=2, null=True)
     fridge_ann = models.CharField(max_length=255, null=True)
 
+    fridge_humidity = models.DecimalField(max_digits=13, decimal_places=10, null=True)
     room_temp = models.DecimalField(max_digits=13, decimal_places=10, null=True)
 
-    fridge_humidity = models.DecimalField(max_digits=13, decimal_places=10, null=True)
     state = models.IntegerField(choices=STATE_CHOICES, default=0)
     log_time = models.DateTimeField(default=timezone.now, db_index=True)
 
@@ -1327,8 +1327,8 @@ class BeerLogPoint(models.Model):
         if set_defaults:
             beerTemp = self.beer_temp or 0
             fridgeTemp = self.fridge_temp or 0
-            roomTemp = self.room_temp or 0
             fridgeHumidity = self.fridge_humidity or 0
+            roomTemp = self.room_temp or 0
             beerSet = self.beer_set or 0
             fridgeSet = self.fridge_set or 0
             gravity_log = self.gravity or 0  # We'll set this just in case
@@ -1336,8 +1336,8 @@ class BeerLogPoint(models.Model):
         else:
             beerTemp = self.beer_temp or None
             fridgeTemp = self.fridge_temp or None
-            roomTemp = self.room_temp or None
             fridgeHumidity = self.fridge_humidity or None
+            roomTemp = self.room_temp or None
             beerSet = self.beer_set or None
             fridgeSet = self.fridge_set or None
             gravity_log = self.gravity or None  # We'll set this just in case

@@ -188,12 +188,10 @@ class GenericPushTarget(models.Model):
                         data_to_send['beer_temp'] = float(device_info['BeerTemp'])
                     if device_info['FridgeTemp'] is not None:
                         data_to_send['fridge_temp'] = float(device_info['FridgeTemp'])
+                    if device_info['FridgeHumidity'] is not None:
+                        data_to_send['fridge_humidity'] = float(device_info['FridgeHumidity'])                        
                     if device_info['RoomTemp'] is not None:
                         data_to_send['room_temp'] = float(device_info['RoomTemp'])
-
-                    if device_info['FridgeHumidity'] is not None:
-                        data_to_send['fridge_humidity'] = float(device_info['FridgeHumidity'])
-
                     if device_info['BeerSet'] is not None:
                         data_to_send['beer_setting'] = float(device_info['BeerSet'])
                     if device_info['FridgeSet'] is not None:
