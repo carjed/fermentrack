@@ -185,28 +185,21 @@ class GenericPushTarget(models.Model):
                     # Because not every device will have temp sensors, only serialize the sensors that exist.
                     # Have to coerce temps to floats, as Decimals aren't json serializable
                     if device_info['BeerTemp'] is not None:
-                        if device_info['BeerTemp'] != 0:
-                            data_to_send['beer_temp'] = float(device_info['BeerTemp'])
+                        data_to_send['beer_temp'] = float(device_info['BeerTemp'])
                     if device_info['FridgeTemp'] is not None:
-                        if device_info['FridgeTemp'] != 0:
-                            data_to_send['fridge_temp'] = float(device_info['FridgeTemp'])
+                        data_to_send['fridge_temp'] = float(device_info['FridgeTemp'])
                     if device_info['RoomTemp'] is not None:
-                        if device_info['RoomTemp'] != 0:
-                            data_to_send['room_temp'] = float(device_info['RoomTemp'])
+                        data_to_send['room_temp'] = float(device_info['RoomTemp'])
 
                     if device_info['FridgeHumidity'] is not None:
-                        if device_info['FridgeHumidity'] != 0:
-                            data_to_send['fridge_humidity'] = float(device_info['FridgeHumidity'])
+                        data_to_send['fridge_humidity'] = float(device_info['FridgeHumidity'])
 
                     if device_info['BeerSet'] is not None:
-                        if device_info['BeerSet'] != 0:
-                            data_to_send['beer_setting'] = float(device_info['BeerSet'])
+                        data_to_send['beer_setting'] = float(device_info['BeerSet'])
                     if device_info['FridgeSet'] is not None:
-                        if device_info['FridgeSet'] != 0:
-                            data_to_send['fridge_setting'] = float(device_info['FridgeSet'])
+                        data_to_send['fridge_setting'] = float(device_info['FridgeSet'])
                     if device_info['State'] is not None:
-                        if device_info['State'] != 0:
-                            data_to_send['controller_state'] = float(device_info['State'])
+                        data_to_send['controller_state'] = float(device_info['State'])
 
                     # Gravity isn't retrieved via get_dashpanel_info, and as such requires special handling
                     try:
