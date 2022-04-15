@@ -459,6 +459,12 @@ function formatTempText(temp) {
     return temp + " " + window.temp_format;
 }
 
+function formatHumidityText(hum) {
+    // This takes the humidity that we are passed from DyGraph below and formats it in accordance with what we
+    // would expect
+    return hum + "%";
+}
+
 function convertGravity(gravity) {
     // Convert to Plato from SG if this is configured
     if(gravity_format == "P") {
@@ -523,7 +529,7 @@ function updateLegend(e, x, pts, row) {
         } else if(pts[i].name == "room_temp") {
             $('#roomTempValue').text(formatTempText(pts[i].yval))
         } else if(pts[i].name == "fridge_humidity") {
-            $('#fridgeHumidityValue').text(formatTempText(pts[i].yval))            
+            $('#fridgeHumidityValue').text(formatHumidityText(pts[i].yval))            
         }{% if beer.gravity_enabled %} else if(pts[i].name == "gravity") {
             $('#gravityValue').text(formatGravText(pts[i].yval))
         } else if(pts[i].name == "grav_temp") {
