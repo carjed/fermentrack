@@ -538,7 +538,7 @@ class BrewfatherPushTarget(models.Model):
                                                                 brewpi_temp_format, latest_log_point.temp_format)
                         if device_info['FridgeHumidity'] is not None:
                             if device_info['FridgeHumidity'] != 0:
-                                to_send['aux_temp'] = temp_convert(float(device_info['FridgeHumidity']),
+                                to_send['humidity'] = temp_convert(float(device_info['FridgeHumidity']),
                                                                 brewpi_temp_format, latest_log_point.temp_format)                                                                
                         if device_info['RoomTemp'] is not None:
                             if device_info['RoomTemp'] != 0:
@@ -584,7 +584,7 @@ class BrewfatherPushTarget(models.Model):
 
                     if 'FridgeHumidity' in device_info:
                         if device_info['FridgeHumidity'] is not None:
-                            to_send['aux_temp'] = float(device_info['FridgeHumidity'])
+                            to_send['humidity'] = float(device_info['FridgeHumidity'])
 
                     if 'RoomTemp' in device_info:
                         if device_info['RoomTemp'] is not None:

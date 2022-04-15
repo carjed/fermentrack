@@ -27,7 +27,7 @@ jsonCols = ("\"cols\":[" +
             "{\"type\":\"number\",\"id\":\"FridgeTemp\",\"label\":\"Fridge temperature\"}," +
             "{\"type\":\"number\",\"id\":\"FridgeSet\",\"label\":\"Fridge setting\"}," +
             "{\"type\":\"string\",\"id\":\"FridgeAnn\",\"label\":\"Fridge Annotate\"}," +
-			"{\"type\":\"string\",\"id\":\"FridgeHumidity\",\"label\":\"Fridge Humidity\"}," +
+			"{\"type\":\"number\",\"id\":\"FridgeHumidity\",\"label\":\"Fridge Humidity\"}," +
             "{\"type\":\"number\",\"id\":\"RoomTemp\",\"label\":\"Room temp.\"}," +
             "{\"type\":\"number\",\"id\":\"State\",\"label\":\"State\"}" +
             "]")

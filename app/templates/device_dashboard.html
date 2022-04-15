@@ -765,12 +765,12 @@ function toggle_graph_visibility(el) {
 
     } else if(el.id == "fridge_humidity_legend") {
         fridge_humidity_visible = !fridge_humidity_visible;
-        g2.setVisibility(5, fridge_humidity_visible);
+        g2.setVisibility(4, fridge_humidity_visible);
         $('#fridgeHumidityValue').text("");
 
     } else if(el.id == "room_temp_legend") {
         room_temp_visible = !room_temp_visible;
-        g2.setVisibility(4, room_temp_visible);
+        g2.setVisibility(5, room_temp_visible);
         $('#roomTempValue').text("");
 
     } {% if beer.gravity_enabled %}else if(el.id == "gravity_legend") {
