@@ -11,6 +11,7 @@ import app.setup_views
 import app.beer_views
 import app.api.lcd
 import app.api.clog
+import app.api.ha
 import app.circus_views
 
 import firmware_flash.urls
@@ -114,6 +115,16 @@ urlpatterns = [
     url(r'^api/log/(?P<return_type>text|json)/(?P<device_type>\w{1,20})/(?P<logfile>stdout|stderr)/$', app.api.clog.get_device_log_combined, name="get_app_log"),
     url(r'^api/log/(?P<return_type>text|json)/(?P<device_type>\w{1,20})/(?P<logfile>stdout|stderr)/l(?P<lines>\d{1,20})/$', app.api.clog.get_device_log_combined, name="get_app_log_lines"),
     # api/gravity views are located in the gravity app
+
+    # Home Assistant API (token-authenticated JSON; see app/api/ha.py)
+    url(r'^api/ha/devices/$', app.api.ha.device_list, name="ha_device_list"),
+    url(r'^api/ha/devices/(?P<device_id>\d{1,20})/$', app.api.ha.device_detail, name="ha_device_detail"),
+    url(r'^api/ha/devices/(?P<device_id>\d{1,20})/mode/$', app.api.ha.device_set_mode, name="ha_device_set_mode"),
+    url(r'^api/ha/devices/(?P<device_id>\d{1,20})/profile/$', app.api.ha.device_set_profile, name="ha_device_set_profile"),
+    url(r'^api/ha/devices/(?P<device_id>\d{1,20})/beer/$', app.api.ha.device_start_beer, name="ha_device_start_beer"),
+    url(r'^api/ha/devices/(?P<device_id>\d{1,20})/logging/$', app.api.ha.device_set_logging, name="ha_device_set_logging"),
+    url(r'^api/ha/profiles/$', app.api.ha.profile_list, name="ha_profile_list"),
+    url(r'^api/ha/state/$', app.api.ha.state, name="ha_state"),
 
 
     # Login/Logout Views

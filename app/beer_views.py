@@ -27,32 +27,18 @@ def beer_create(request, device_id):
         form = beer_forms.BeerCreateForm(request.POST)
         if form.is_valid():
 
-            # TODO - Adjust this to just create the beer. Beer filenames now contain the id, and are therefore always unique
-            new_beer, created = Beer.objects.get_or_create(name=form.cleaned_data['beer_name'],
-                                                           device=form.cleaned_data['device'])
+            new_beer, created, gravity_started = Beer.create_and_start_on_device(
+                device=form.cleaned_data['device'], name=form.cleaned_data['beer_name'])
             if created:
-                # If we just created the beer, set the temp format (otherwise, defaults to Fahrenheit)
-                new_beer.format = form.cleaned_data['device'].temp_format
-                new_beer.save()
                 messages.success(
                     request,
                     "Successfully created beer '{}'.<br>Graph will not appear until the first log points \
                     have been collected. You will need to refresh the page for it to \
                     appear.".format(form.cleaned_data['beer_name']))
-
-                if hasattr(new_beer.device, 'gravity_sensor'):
-                    # The device this beer is being assigned to has an active gravity sensor. Lets enable logging.
-                    new_beer.gravity_enabled = True
-                    new_beer.save()
-
-                    # This also means we need to start a log on the gravity sensor as well.
-                    new_beer.device.gravity_sensor.create_log_and_start_logging(name=form.cleaned_data['beer_name'])
+                if gravity_started:
                     messages.success(request, 'Started logging gravity data for sensor {}'.format(str(new_beer.device.gravity_sensor)))
-
             else:
                 messages.success(request, "Beer {} already exists - assigning to device".format(form.cleaned_data['beer_name']))
-
-            form.cleaned_data['device'].start_new_brew(new_beer)
 
         else:
             messages.error(request, "<p>Unable to create beer</p> %s" % form.errors['__all__'])

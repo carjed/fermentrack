@@ -42,6 +42,8 @@ CONFIG_INI_FILEPATH = ROOT_DIR / 'fermentrack_django' / 'config.ini'
 config = configparser.ConfigParser()
 config.read(CONFIG_INI_FILEPATH)
 ENABLE_SENTRY = config.getboolean("sentry", "enable_sentry", fallback=True)
+# Allow an environment variable (e.g. set by the Docker entrypoint) to override the config.ini setting
+ENABLE_SENTRY = env.bool("DJANGO_ENABLE_SENTRY", default=ENABLE_SENTRY)
 
 
 try:
@@ -264,6 +266,8 @@ CONSTANCE_CONFIG = {
     'SQLITE_OK_DJANGO_2': (False, 'Has the Django 2.0+ SQLite migration been run?',
                                    bool),
     'CUSTOM_THEME': ('default', 'What color theme would you like to use for Fermentrack?', 'custom_theme_select'),
+    'HA_API_TOKEN': ('', 'Bearer token required by the Home Assistant API (/api/ha/). Leave blank to disable the API.',
+                     str),
 
 }
 
@@ -279,7 +283,9 @@ CONSTANCE_CONFIG_FIELDSETS = {
     'Internal Items': ('FIRMWARE_LIST_LAST_REFRESHED', 'LAST_GIT_CHECK', 'USER_HAS_COMPLETED_CONFIGURATION',
                        'SQLITE_OK_DJANGO_2'),
 
-    'Advanced Options': ('ALLOW_GIT_BRANCH_SWITCHING','GIT_UPDATE_TYPE')
+    'Advanced Options': ('ALLOW_GIT_BRANCH_SWITCHING','GIT_UPDATE_TYPE'),
+
+    'Home Assistant API': ('HA_API_TOKEN',),
 }
 
 

@@ -24,6 +24,9 @@ from fermentrack_django.settings import USE_DOCKER
 
 logger = logging.getLogger(__name__)
 
+# Seconds to wait when connecting to / reading from brewpi-script's socket before treating it as unavailable
+BREWPI_SOCKET_TIMEOUT = 10
+
 # BrewPiDevice
 # |
 # |--Beer,Beer,...
@@ -577,19 +580,22 @@ class BrewPiDevice(models.Model):
     # I'm torn as to whether or not to move all of this out to another class. Leaving everything socket-related here
     # for now.
     def open_socket(self):
+        """Connects to this device's brewpi-script socket. Returns None if the connection fails."""
         if self.useInetSocket:
             this_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM, socket.SOL_TCP)
         else:
             this_socket = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
 
-        if this_socket:
-            try:
-                if self.useInetSocket:
-                    this_socket.connect((self.socketHost, self.socketPort))
-                else:
-                    this_socket.connect(self.socket_name)
-            except:
-                this_socket.close()
+        # Without a timeout, a hung brewpi-script would block the calling web worker (or API poll) indefinitely
+        this_socket.settimeout(BREWPI_SOCKET_TIMEOUT)
+        try:
+            if self.useInetSocket:
+                this_socket.connect((self.socketHost, self.socketPort))
+            else:
+                this_socket.connect(self.socket_name)
+        except Exception:
+            this_socket.close()
+            return None
 
         return this_socket
 
@@ -617,11 +623,14 @@ class BrewPiDevice(models.Model):
             message_to_send += "=" + message_extended
         this_socket = self.open_socket()
         if this_socket:
-            if self.write_to_socket(this_socket, message_to_send):
-                if read_response:
-                    return self.read_from_socket(this_socket)
-                else:
-                    return True
+            try:
+                if self.write_to_socket(this_socket, message_to_send):
+                    if read_response:
+                        return self.read_from_socket(this_socket)
+                    else:
+                        return True
+            finally:
+                this_socket.close()
         return False
 
     def read_lcd(self):
@@ -932,7 +941,7 @@ class BrewPiDevice(models.Model):
     def get_dashpanel_info(self):
         try:  # This is apparently failing when being called in a loop for external_push - Wrapping in a try/except so the loop doesn't die
             return json.loads(self.send_message("getDashInfo", read_response=True))
-        except TypeError:
+        except (TypeError, ValueError):  # No response (None) or an empty/invalid response from brewpi-script
             return None
 
     def circus_parameter(self) -> int:
@@ -1095,6 +1104,29 @@ class Beer(models.Model):
 
     def __str__(self):
         return self.name
+
+    @classmethod
+    def create_and_start_on_device(cls, device, name):
+        """Creates (or reuses) a beer with the given name on the device and starts logging to it.
+
+        Returns a tuple of (beer, created, gravity_logging_started)."""
+        new_beer, created = cls.objects.get_or_create(name=name, device=device)
+        gravity_logging_started = False
+        if created:
+            # If we just created the beer, set the temp format (otherwise, defaults to Fahrenheit)
+            new_beer.format = device.temp_format
+            new_beer.save()
+
+            if hasattr(new_beer.device, 'gravity_sensor'):
+                # The device this beer is being assigned to has an active gravity sensor. Lets enable logging.
+                new_beer.gravity_enabled = True
+                new_beer.save()
+                # This also means we need to start a log on the gravity sensor as well.
+                new_beer.device.gravity_sensor.create_log_and_start_logging(name=name)
+                gravity_logging_started = True
+
+        device.start_new_brew(new_beer)
+        return new_beer, created, gravity_logging_started
 
     def column_headers(self, which='base_csv', human_readable=False):
         if which == 'base_csv':

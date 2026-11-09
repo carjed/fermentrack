@@ -1,0 +1,109 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Connect to Fermentrack",
+        "description": "Generate an API token on the Fermentrack host with `python manage.py ha_api_token --regenerate`.",
+        "data": {
+          "url": "Fermentrack URL",
+          "token": "API token",
+          "verify_ssl": "Verify SSL certificate"
+        }
+      },
+      "reauth_confirm": {
+        "title": "Update Fermentrack API token",
+        "data": {
+          "token": "API token"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Unable to connect to Fermentrack. Check the URL.",
+      "invalid_auth": "The API token was rejected, or the API is disabled (no token configured in Fermentrack).",
+      "unknown": "Unexpected error"
+    },
+    "abort": {
+      "already_configured": "This Fermentrack instance is already configured",
+      "reauth_successful": "Re-authentication was successful"
+    }
+  },
+  "entity": {
+    "climate": {
+      "chamber": {
+        "state_attributes": {
+          "preset_mode": {
+            "state": {
+              "beer_constant": "Beer constant",
+              "fridge_constant": "Fridge constant",
+              "beer_profile": "Beer profile"
+            }
+          }
+        }
+      }
+    },
+    "select": {
+      "profile": {
+        "name": "Fermentation profile"
+      }
+    },
+    "sensor": {
+      "beer_temp": { "name": "Beer temperature" },
+      "fridge_temp": { "name": "Fridge temperature" },
+      "room_temp": { "name": "Room temperature" },
+      "beer_set": { "name": "Beer setpoint" },
+      "fridge_set": { "name": "Fridge setpoint" },
+      "fridge_humidity": { "name": "Fridge humidity" },
+      "active_beer": { "name": "Active beer" },
+      "controller_state": {
+        "name": "Controller state",
+        "state": {
+          "idle": "Idle",
+          "state_off": "Off",
+          "door_open": "Door open",
+          "heating": "Heating",
+          "cooling": "Cooling",
+          "waiting_to_cool": "Waiting to cool",
+          "waiting_to_heat": "Waiting to heat",
+          "waiting_for_peak_detect": "Waiting for peak detect",
+          "cooling_min_time": "Cooling (minimum time)",
+          "heating_min_time": "Heating (minimum time)"
+        }
+      },
+      "logging_status": {
+        "name": "Logging status",
+        "state": {
+          "active": "Active",
+          "paused": "Paused",
+          "stopped": "Stopped"
+        }
+      }
+    }
+  },
+  "services": {
+    "start_profile": {
+      "name": "Start fermentation profile",
+      "description": "Switches the controller to beer-profile mode using a Fermentrack fermentation profile.",
+      "fields": {
+        "device_id": { "name": "Controller", "description": "The Fermentrack controller." },
+        "profile": { "name": "Profile", "description": "Profile name or numeric id." },
+        "start_at_hours": { "name": "Start at (hours)", "description": "Start this many hours into the profile." }
+      }
+    },
+    "start_beer": {
+      "name": "Start beer",
+      "description": "Creates a beer log (or reuses an existing one with the same name) and starts logging to it.",
+      "fields": {
+        "device_id": { "name": "Controller", "description": "The Fermentrack controller." },
+        "name": { "name": "Beer name", "description": "Letters, numbers, dashes, spaces and underscores only." }
+      }
+    },
+    "set_logging": {
+      "name": "Set logging status",
+      "description": "Resume, pause, or stop data logging for the active beer.",
+      "fields": {
+        "device_id": { "name": "Controller", "description": "The Fermentrack controller." },
+        "status": { "name": "Status", "description": "active, paused, or stopped." }
+      }
+    }
+  }
+}

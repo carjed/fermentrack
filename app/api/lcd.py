@@ -37,7 +37,7 @@ def getPanel(req, device_id):
 
     def hum_text(hum):
         if (hum is None) or (hum == 0):
-            return "--%; {}"
+            return "--%"
         else:
             return "{:.1f}%".format(hum)
 
