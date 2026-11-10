@@ -6,7 +6,7 @@ pyzmq==22.3.0    # Fingers crossed the wheel works
 # numpy==1.18.4 --no-binary=numpy  # The wheel for numpy also has issues (at least on Stretch)
 
 pytz==2020.4           # required by manage.py migrate
-sentry-sdk             # used for debugging
+sentry-sdk<1.10        # used for debugging. 1.10+ needs urllib3>=1.26.11, which conflicts with urllib3<1.26 below
 django-constance[database]  # for managing user-configured constants
 GitPython                   # for managing git integration
 zeroconf==0.28.7        # for locating ESP8266 devices
