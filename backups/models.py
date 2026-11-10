@@ -105,7 +105,9 @@ class Backup(TimeStampedModel):
 
     def compress_staging_to_file(self):
         data_dump_file = settings.BACKUP_STAGING_DIR / settings.BACKUP_DATA_DUMP_FILE_NAME
-        with tarfile.open(self.outfile_path, mode="w:xz") as f:
+        # xz preset 1 is ~20x faster than the default (6) on CSV logs for a ~30% larger archive. The default could take
+        # minutes on a Raspberry Pi-class board and hit the web server's request timeout.
+        with tarfile.open(self.outfile_path, mode="w:xz", preset=1) as f:
             f.add(data_dump_file, arcname=settings.BACKUP_DATA_DUMP_FILE_NAME)
             # f.add(settings.MEDIA_ROOT, arcname="media/")
             f.add(settings.DATA_ROOT, arcname="data/")
