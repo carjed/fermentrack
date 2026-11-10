@@ -23,6 +23,9 @@ class BackupTests(TestCase):
         with override_settings(BACKUPS_EXCLUDE_APPS=settings.BACKUPS_EXCLUDE_APPS + ['nope.Missing', 'nope']):
             excluded = Backup.get_exclude_list()
         self.assertIn('constance.Constance', excluded)
+        # In-memory models have no table in older databases, so dumpdata must skip them
+        for label in ('app.PinDevice', 'app.SensorDevice', 'app.BeerLogPoint'):
+            self.assertIn(label, excluded)
         self.assertNotIn('nope.Missing', excluded)
         self.assertNotIn('nope', excluded)
 

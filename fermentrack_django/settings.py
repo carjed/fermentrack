@@ -334,6 +334,20 @@ SENTRY_DSN_MAP = {
 }
 
 
+# Write unhandled request errors (500s) with their tracebacks to stderr, which Circus saves to
+# log/fermentrack-stderr.log. Without this, DEBUG=False only emails them to ADMINS (none are configured).
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'stderr': {'class': 'logging.StreamHandler'},
+    },
+    'loggers': {
+        'django.request': {'handlers': ['stderr'], 'level': 'ERROR', 'propagate': False},
+    },
+}
+
+
 if ENABLE_SENTRY:
     import sentry_sdk
     from sentry_sdk.integrations.django import DjangoIntegration

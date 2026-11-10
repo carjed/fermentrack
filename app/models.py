@@ -45,7 +45,7 @@ BREWPI_SOCKET_TIMEOUT = 10
 
 class PinDevice(models.Model):
     class Meta:
-        managed = True
+        managed = False  # Built in memory from controller data, never stored
 
     text = models.CharField(max_length=16, default="")
     type = models.CharField(max_length=8, default="")
@@ -79,7 +79,7 @@ class PinDevice(models.Model):
 # SensorDevice is a "sensor" (onewire addressable?) device
 class SensorDevice(models.Model):
     class Meta:
-        managed = True
+        managed = False  # Built in memory from controller data, never stored
         verbose_name = "Sensor Device"
         verbose_name_plural = "Sensor Devices"
 
@@ -1266,7 +1266,7 @@ class BeerLogPoint(models.Model):
     """
 
     class Meta:
-        managed = True  # Since we're using flatfiles rather than a database
+        managed = False  # Since we're using flatfiles rather than a database
         verbose_name = "Beer Log Point"
         verbose_name_plural = "Beer Log Points"
         ordering = ['log_time']
