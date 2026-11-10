@@ -69,17 +69,19 @@ class FermentrackClimate(FermentrackEntity, ClimateEntity):
 
     # --- State ---
 
+    # Temperatures are reported in the controller's own unit; HA converts them for display. min_temp/max_temp are in
+    # that native unit too.
     @property
-    def temperature_unit(self) -> str:
+    def native_temperature_unit(self) -> str:
         return UnitOfTemperature.FAHRENHEIT if self.device.get("temp_format") == "F" else UnitOfTemperature.CELSIUS
 
     @property
     def min_temp(self) -> float:
-        return 28.0 if self.temperature_unit == UnitOfTemperature.FAHRENHEIT else -2.0
+        return 33.8 if self.native_temperature_unit == UnitOfTemperature.FAHRENHEIT else 1.0
 
     @property
     def max_temp(self) -> float:
-        return 86.0 if self.temperature_unit == UnitOfTemperature.FAHRENHEIT else 30.0
+        return 120.0 if self.native_temperature_unit == UnitOfTemperature.FAHRENHEIT else 48.9
 
     @property
     def _mode(self) -> str | None:
@@ -108,13 +110,13 @@ class FermentrackClimate(FermentrackEntity, ClimateEntity):
         return self._mode if self._mode in PRESETS else None
 
     @property
-    def current_temperature(self) -> float | None:
+    def native_current_temperature(self) -> float | None:
         if self._mode == MODE_FRIDGE_CONSTANT:
             return self.device.get("fridge_temp")
         return self.device.get("beer_temp")
 
     @property
-    def target_temperature(self) -> float | None:
+    def native_target_temperature(self) -> float | None:
         if self._mode == MODE_FRIDGE_CONSTANT:
             return self.device.get("fridge_set")
         if self._mode in (MODE_BEER_CONSTANT, MODE_BEER_PROFILE):
@@ -140,6 +142,12 @@ class FermentrackClimate(FermentrackEntity, ClimateEntity):
             "logging_status": self.device.get("logging_status"),
         }
 
+    # Home Assistant before the native_* temperature API only reads the old names
+    if not hasattr(ClimateEntity, "native_temperature_unit"):
+        temperature_unit = native_temperature_unit
+        current_temperature = native_current_temperature
+        target_temperature = native_target_temperature
+
     # --- Commands ---
 
     async def _set_mode(self, mode: str, temperature: float | None = None) -> None:
@@ -151,7 +159,7 @@ class FermentrackClimate(FermentrackEntity, ClimateEntity):
 
     def _fallback_target(self, preset: str) -> float:
         key = "fridge_set" if preset == MODE_FRIDGE_CONSTANT else "beer_set"
-        for candidate in (self.device.get(key), self.target_temperature, self.current_temperature):
+        for candidate in (self.device.get(key), self.native_target_temperature, self.native_current_temperature):
             if candidate is not None:
                 return candidate
         raise ServiceValidationError("No target temperature known yet - set a temperature instead")
