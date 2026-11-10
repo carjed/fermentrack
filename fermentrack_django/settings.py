@@ -192,7 +192,10 @@ DATA_ROOT = ROOT_DIR / 'data'
 
 # Backups
 # ------------------------------------------------------------------------------
-BACKUPS_EXCLUDE_APPS = ['backups', 'auth.permission', 'contenttypes', 'firmware_flash', 'sessions', 'admin.logentry', 'database.constance']  # noqa: Apps exist
+# Site settings (constance) are left out of backups. django-constance 4+ names the model constance.Constance; older
+# versions used database.constance. Entries that don't exist in the installed versions are skipped.
+BACKUPS_EXCLUDE_APPS = ['backups', 'auth.permission', 'contenttypes', 'firmware_flash', 'sessions', 'admin.logentry',
+                        'constance.Constance', 'database.constance']
 BACKUP_DIR = ROOT_DIR / "backup_files"
 BACKUP_STAGING_DIR = BACKUP_DIR / "staging"
 BACKUP_DATA_DUMP_FILE_NAME = "fermentrack_data.json"

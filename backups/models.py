@@ -57,13 +57,28 @@ class Backup(TimeStampedModel):
 
         return excluded_models
 
+    @staticmethod
+    def _label_exists(label: str) -> bool:
+        """True if label names an installed app ("app_label") or model ("app_label.ModelName")"""
+        try:
+            if '.' in label:
+                apps.get_model(label)
+            else:
+                apps.get_app_config(label)
+        except LookupError:
+            return False
+        return True
+
     @classmethod
     def get_exclude_list(cls) -> list:
         excluded_models = cls.get_unmanaged_models()
-        return excluded_models + settings.BACKUPS_EXCLUDE_APPS
+        # dumpdata raises "Unknown model" for an exclude entry that doesn't exist, so skip those
+        return excluded_models + [label for label in settings.BACKUPS_EXCLUDE_APPS if cls._label_exists(label)]
 
     @classmethod
     def dump_database_to_file(cls):
+        # The staging directory can be missing, e.g. when backup_files is an empty mounted volume
+        settings.BACKUP_STAGING_DIR.mkdir(parents=True, exist_ok=True)
         data_dump_file = settings.BACKUP_STAGING_DIR / settings.BACKUP_DATA_DUMP_FILE_NAME
 
         exclude_models = cls.get_exclude_list()
